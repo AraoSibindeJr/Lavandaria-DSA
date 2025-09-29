@@ -1,9 +1,9 @@
-package Telas;
+package src.UI_Telas;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class Cadastro {
+public class Tela_Cadastro {
     private JFrame frame;
     private JPanel panelCima;
     private JPanel panelBaixo;
@@ -22,7 +22,7 @@ public class Cadastro {
     private JComboBox escolherSexo;
     private JComboBox tipoReg;
 
-    public Cadastro(){
+    public Tela_Cadastro(){
         instanciar();
         proTela();
         proPanel();
@@ -55,7 +55,8 @@ public class Cadastro {
 
      void proTela(){
         frame.setTitle("AroEd-Lavandaria");
-        frame.setSize(500, 450);
+        frame.setSize(400, 550);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(iconeTela.getImage());
@@ -64,18 +65,27 @@ public class Cadastro {
 
     void proLabel(){
         titulo.setText("AroEd Lavandaria");
-        //titulo.setIcon(new ImageIcon(iconeTitulo.getImage()));
+        titulo.setFont(new Font("Sans-serif",Font.BOLD,28));
         titulo.setForeground(new Color(255, 255, 255, 255));
 
         nome.setText("Nome: ");
+        nome.setForeground(Color.WHITE);
         sexo.setText("Sexo: ");
+        sexo.setForeground(Color.WHITE);
+
         idade.setText("Idade: ");
+        idade.setForeground(Color.WHITE);
+
         tipoRegistro.setText("Tipo de Registro");
+        tipoRegistro.setForeground(Color.WHITE);
+
     }
 
     void proBotoes(){
         btnCancelar.setText("Cancelar");
+        btnCancelar.setForeground(new Color(37, 78, 199));
         btnConcluir.setText("Concluir");
+        btnConcluir.setForeground(new Color(37, 78, 199));
     }
 
 
