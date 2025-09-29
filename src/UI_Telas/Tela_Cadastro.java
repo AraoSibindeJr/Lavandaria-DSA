@@ -71,7 +71,7 @@ public class Tela_Cadastro implements ActionListener {
         titulo.setHorizontalTextPosition(SwingConstants.RIGHT);
         titulo.setIconTextGap(15);
         titulo.setIcon(iconeRedimensionado);
-        titulo.setText("AroEd Lavandaria");
+        titulo.setText("Cadastro");
         titulo.setFont(new Font("Sans-serif", Font.BOLD, 28));
         titulo.setForeground(Color.WHITE);
 
@@ -175,10 +175,18 @@ public class Tela_Cadastro implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (txtNome.getText() != null && !txtNome.getText().isEmpty()) {
             if (e.getSource() == btnConcluir) {
+                // Dados necessarios na tela de Recibo
+                String nome = txtNome.getText();
+                String sexo = escolherSexo.getSelectedItem().toString();
+                int idade = (int) esconherIdade.getValue();
+                String horaRegistro = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
                 JOptionPane.showMessageDialog(null,
                         "Usuario registrado com sucesso!",
                         "Confirmacao",
                         JOptionPane.INFORMATION_MESSAGE);
+                        //Abrir a tela de recibo
+                new Tela_Recibo(nome,sexo,idade,horaRegistro);
+                frame.dispose();
             }
         } else {
             if (e.getSource() == btnConcluir) {
@@ -191,7 +199,5 @@ public class Tela_Cadastro implements ActionListener {
         if (e.getSource() == btnCancelar){
             System.exit(0);
         }
-
-
     }
 }
