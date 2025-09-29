@@ -2,8 +2,10 @@ package src.UI_Telas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Tela_Cadastro {
+public class Tela_Cadastro implements ActionListener {
     private JFrame frame;
     private JPanel panelCima;
     private JPanel panelBaixo;
@@ -26,6 +28,7 @@ public class Tela_Cadastro {
         instanciar();
         proTela();
         proPanel();
+        accoes();
         proCombo();
         proBotoes();
         proLabel();
@@ -63,6 +66,11 @@ public class Tela_Cadastro {
     }
 
     void proLabel() {
+        Image img = iconeTitulo.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        ImageIcon iconeRedimensionado = new ImageIcon(img);
+        titulo.setHorizontalTextPosition(SwingConstants.RIGHT);
+        titulo.setIconTextGap(15);
+        titulo.setIcon(iconeRedimensionado);
         titulo.setText("AroEd Lavandaria");
         titulo.setFont(new Font("Sans-serif", Font.BOLD, 28));
         titulo.setForeground(Color.WHITE);
@@ -156,5 +164,34 @@ public class Tela_Cadastro {
         panelBaixo.setLayout(new FlowLayout(FlowLayout.CENTER,30,20));
         panelBaixo.add(btnCancelar);
         panelBaixo.add(btnConcluir);
+    }
+
+    void accoes(){
+        btnConcluir.addActionListener(this);
+        btnCancelar.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (txtNome.getText() != null && !txtNome.getText().isEmpty()) {
+            if (e.getSource() == btnConcluir) {
+                JOptionPane.showMessageDialog(null,
+                        "Usuario registrado com sucesso!",
+                        "Confirmacao",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            if (e.getSource() == btnConcluir) {
+                JOptionPane.showMessageDialog(null,
+                        "Por favor, insira o seu nome para continuar.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        if (e.getSource() == btnCancelar){
+            System.exit(0);
+        }
+
+
     }
 }
