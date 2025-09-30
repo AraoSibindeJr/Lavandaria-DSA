@@ -1,5 +1,8 @@
 package src.UI_Telas;
 
+import src.Entidades.Cliente;
+import src.Entidades.ListaClientes;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -77,7 +80,7 @@ public class Tela_Cadastro implements ActionListener {
     void proTela() {
         frame.setTitle("AroEd-Lavandaria");
         frame.setSize(450, 600);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE); // Alterado para DISPOSE_ON_CLOSE
         frame.setLocationRelativeTo(null);
         frame.setIconImage(iconeTela.getImage());
         frame.setLayout(new BorderLayout(15, 15));
@@ -224,31 +227,100 @@ public class Tela_Cadastro implements ActionListener {
         });
     }
 
+    // NOVO MÉTODO: Verificar se nome já existe
+    private boolean nomeJaExiste(String nome) {
+        // Buscar na lista de clientes da tela principal
+        ListaClientes listaClientes = telaPrincipal.getListaClientes();
+
+        if (listaClientes != null && listaClientes.inicio != null) {
+            Cliente atual = listaClientes.inicio;
+            while (atual != null) {
+                if (atual.nome.equalsIgnoreCase(nome)) {
+                    return true; // Nome já existe
+                }
+                atual = atual.proximo;
+            }
+        }
+        return false; // Nome não existe
+    }
+
+    // NOVO MÉTODO: Mostrar detalhes do cliente existente
+    private void mostrarClienteExistente(String nome) {
+        ListaClientes listaClientes = telaPrincipal.getListaClientes();
+        Cliente clienteExistente = listaClientes.buscarClientePorNome(nome);
+
+        if (clienteExistente != null) {
+            int id = listaClientes.obterIDDoCliente(clienteExistente);
+
+            String mensagem = String.format(
+                    "⚠️ CLIENTE JA CADASTRADO!\n\n" +
+                            "Já existe um cliente com o nome '%s':\n\n" +
+                            "📋 Informações do Cliente Existente:\n" +
+                            "➤ ID: %d\n" +
+                            "➤ Nome: %s\n" +
+                            "➤ Sexo: %s\n" +
+                            "➤ Idade: %d anos\n" +
+                            "➤ Hora de Entrada: %s\n\n" +
+                            "💰 Valor a Pagar: %,.2f MZN\n" +
+                            "📊 Status: %s\n\n" +
+                            "❌ Não é permitido cadastrar clientes com o mesmo nome.",
+                    nome, id, clienteExistente.nome, clienteExistente.sexo,
+                    clienteExistente.idade, clienteExistente.horaEntrada,
+                    clienteExistente.valorApagar, clienteExistente.status
+            );
+
+            JOptionPane.showMessageDialog(frame,
+                    mensagem,
+                    "Cliente Já Existente",
+                    JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == btnConcluir){
-            if (txtNome.getText() == null || txtNome.getText().isEmpty()){
-                JOptionPane.showMessageDialog(null,"Por favor, insira o seu nome para continuar.","Aviso",JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            if (modeloTabela.getRowCount()==0){
+            // Validação do nome
+            if (txtNome.getText() == null || txtNome.getText().trim().isEmpty()){
                 JOptionPane.showMessageDialog(null,
-                        "O carrinho esta vazio! Por favor, adicione pecas antes de continuar.",
+                        "Por favor, insira o seu nome para continuar.",
                         "Aviso",
                         JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            String nomeCliente = txtNome.getText();
+
+            String nomeCliente = txtNome.getText().trim();
+
+            // NOVA VALIDAÇÃO: Verificar se nome já existe
+            if (nomeJaExiste(nomeCliente)) {
+                mostrarClienteExistente(nomeCliente);
+                txtNome.requestFocus(); // Dar foco no campo de nome
+                txtNome.selectAll(); // Selecionar todo o texto
+                return; // Impedir o cadastro
+            }
+
+            // Validação do carrinho
+            if (modeloTabela.getRowCount() == 0){
+                JOptionPane.showMessageDialog(null,
+                        "O carrinho está vazio! Por favor, adicione peças antes de continuar.",
+                        "Aviso",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Se passou todas as validações, prosseguir com o cadastro
             String sexoCliente = escolherSexo.getSelectedItem().toString();
             int idadeCliente = (int) esconherIdade.getValue();
             String horaRegistro = java.time.LocalDateTime.now()
                     .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
             frame.dispose();
             new Tela_Recibo(nomeCliente, sexoCliente, idadeCliente, horaRegistro, modeloTabela, telaPrincipal);
 
         }
-        if (e.getSource()==btnCancelar){
-            System.exit(0);
+        if (e.getSource() == btnCancelar){
+            // Alterado para apenas fechar a janela, não encerrar o programa
+            frame.dispose();
+            telaPrincipal.getFrame().setVisible(true); // Mostrar a tela principal novamente
         }
     }
 }

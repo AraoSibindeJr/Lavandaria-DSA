@@ -12,6 +12,9 @@ public class Cliente {
     public int vestidos;
     public int totItems;
     public double valorApagar;
+    public String status;
+    public Cliente proximo;
+
 
     public Cliente(String nome, String sexo, int idade, String horaEntrada, int calcas, int camisetas, int camisolas, int vestidos, int totItems, double valorApagar){
         this.nome = nome;
@@ -24,10 +27,12 @@ public class Cliente {
         this.vestidos = vestidos;
         this.totItems = totItems;
         this.valorApagar = valorApagar;
+        this.status = "Pendente";
+        this.proximo = null;
     }
 
     @Override
     public String toString() {
-        return nome + ";" + sexo + ";" + idade + ";" + horaEntrada + ";" + calcas + ";" + camisetas + ";" + camisolas + ";" + vestidos + ";" + totItems + ";" + valorApagar;
+        return nome + ";" + sexo + ";" + idade + ";" + horaEntrada + ";" + calcas + ";" + camisetas + ";" + camisolas + ";" + vestidos + ";" + totItems + ";" + valorApagar + ";" + status;
     }
 }

@@ -50,7 +50,7 @@ class Tela_Recibo implements ActionListener {
         panelCima = new JPanel();
         panelCentro = new JPanel();
         panelBaixo = new JPanel();
-        titulo = new JLabel("Recibo do Cliente: " + nome);
+        titulo = new JLabel("Recibo do/a Cliente: " + nome);
         btnContinuar = new JButton("Continuar");
     }
 
@@ -140,38 +140,38 @@ class Tela_Recibo implements ActionListener {
         int totalPagar = 0;
         int calcas = 0, camisetas = 0, camisolas = 0, vestidos = 0;
 
-        // Criar panel para o conteúdo do recibo
+
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(Color.WHITE);
         contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Cabeçalho
-        JLabel lblHeader = new JLabel("🏪 Lavandaria AroEd");
+
+        JLabel lblHeader = new JLabel(" Lavandaria AroEd");
         lblHeader.setFont(new Font("Sans-serif", Font.BOLD, 20));
         lblHeader.setForeground(new Color(37, 78, 199));
         lblHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblHeader.setBorder(new EmptyBorder(0, 0, 15, 0));
         contentPanel.add(lblHeader);
 
-        // Informações do cliente
-        contentPanel.add(criarLinhaRecibo("👤 Nome:", nome));
-        contentPanel.add(criarLinhaRecibo("⚤ Sexo:", sexo));
-        contentPanel.add(criarLinhaRecibo("🎂 Idade:", idade + " anos"));
-        contentPanel.add(criarLinhaRecibo("🕒 Hora Entrada:", horaRegistro));
 
-        // Separador
+        contentPanel.add(criarLinhaRecibo(" Nome:", nome));
+        contentPanel.add(criarLinhaRecibo(" Sexo:", sexo));
+        contentPanel.add(criarLinhaRecibo(" Idade:", idade + " anos"));
+        contentPanel.add(criarLinhaRecibo(" Hora Entrada:", horaRegistro));
+
+
         contentPanel.add(criarSeparador());
 
-        // Título do carrinho
-        JLabel lblCarrinho = new JLabel("🛒 Itens do Serviço");
+
+        JLabel lblCarrinho = new JLabel("🛒 Itens do Cliente");
         lblCarrinho.setFont(new Font("Sans-serif", Font.BOLD, 16));
         lblCarrinho.setForeground(new Color(80, 80, 80));
         lblCarrinho.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblCarrinho.setBorder(new EmptyBorder(5, 0, 10, 0));
         contentPanel.add(lblCarrinho);
 
-        // Processar itens da tabela
+
         for(int i = 0; i < tabelaPecas.getRowCount(); i++){
             String item = tabelaPecas.getValueAt(i, 0).toString();
             int qtd = (int) tabelaPecas.getValueAt(i, 1);
@@ -186,7 +186,7 @@ class Tela_Recibo implements ActionListener {
             totalPecas += qtd;
             totalPagar += precoItem;
 
-            // Adicionar linha do item
+
             contentPanel.add(criarItemRecibo(item, qtd, precoItem));
 
             switch(item){
@@ -197,35 +197,35 @@ class Tela_Recibo implements ActionListener {
             }
         }
 
-        // Separador
+
         contentPanel.add(criarSeparador());
 
-        // Totais
-        contentPanel.add(criarLinhaTotal("📦 Total de Peças:", String.valueOf(totalPecas)));
-        contentPanel.add(criarLinhaTotal("💰 Total a Pagar:", String.format("%,d MZN", totalPagar)));
 
-        // Separador
+        contentPanel.add(criarLinhaTotal("Total de Pecas:", String.valueOf(totalPecas)));
+        contentPanel.add(criarLinhaTotal("Total a Pagar:", String.format("%,d MZN", totalPagar)));
+
+
         contentPanel.add(criarSeparador());
 
-        // Rodapé
-        JLabel lblObrigado = new JLabel("🙏 Obrigado pela preferência!");
+
+        JLabel lblObrigado = new JLabel("Obrigado pela preferencia!");
         lblObrigado.setFont(new Font("Sans-serif", Font.BOLD, 14));
         lblObrigado.setForeground(new Color(37, 78, 199));
         lblObrigado.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblObrigado.setBorder(new EmptyBorder(10, 0, 5, 0));
         contentPanel.add(lblObrigado);
 
-        // Adicionar scroll pane se necessário
+
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBorder(null);
         scrollPane.getViewport().setBackground(Color.WHITE);
         panelCentro.add(scrollPane, BorderLayout.CENTER);
 
-        // Criar objeto Cliente e salvar
+
         Cliente cliente = new Cliente(nome, sexo, idade, horaRegistro,
                 calcas, camisetas, camisolas, vestidos, totalPecas, totalPagar);
 
-        // Gravar no arquivo
+
         try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/BaseDados/Clientes.txt", true))){
             writer.write(cliente.toString());
             writer.newLine();
@@ -233,7 +233,7 @@ class Tela_Recibo implements ActionListener {
             e.printStackTrace();
         }
 
-        // Adicionar na tabela da tela principal
+
         telaPrincipal.adicionarCliente(cliente);
     }
 
@@ -264,15 +264,7 @@ class Tela_Recibo implements ActionListener {
         panel.setMaximumSize(new Dimension(400, 35));
         panel.setBorder(new EmptyBorder(5, 15, 5, 15));
 
-        String emoji = switch(item) {
-            case "Calca" -> "👖";
-            case "Camiseta" -> "👕";
-            case "Camisola" -> "🧥";
-            case "Vestido" -> "👗";
-            default -> "📝";
-        };
-
-        JLabel lblItem = new JLabel(emoji + " " + item);
+        JLabel lblItem = new JLabel(item);
         lblItem.setFont(new Font("Sans-serif", Font.PLAIN, 13));
         lblItem.setForeground(new Color(60, 60, 60));
 
