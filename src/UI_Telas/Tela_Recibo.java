@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.IOException;
 
 class Tela_Recibo implements ActionListener {
     private JFrame frame;
@@ -105,7 +104,7 @@ class Tela_Recibo implements ActionListener {
                 calcas, camisetas, camisolas, vestidos, totalPecas, totalPagar);
 
         // Gravar no arquivo
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter("Clientes.txt",true))){
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("src/BaseDados/Clientes.txt",true))){
             writer.write(cliente.toString());
             writer.newLine();
         }catch(Exception e){ e.printStackTrace(); }

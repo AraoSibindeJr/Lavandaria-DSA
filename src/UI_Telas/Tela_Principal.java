@@ -229,7 +229,7 @@ public class Tela_Principal implements ActionListener {
     }
 
     public void carregarClientesDoArquivo(){
-        File file = new File("Clientes.txt");
+        File file = new File("src/BaseDados/Clientes.txt");
         if(!file.exists()) return;
 
         try(BufferedReader br = new BufferedReader(new FileReader(file))){
