@@ -266,7 +266,7 @@ public class Tela_Cadastro implements ActionListener {
                             "❌ Não é permitido cadastrar clientes com o mesmo nome.",
                     nome, id, clienteExistente.nome, clienteExistente.sexo,
                     clienteExistente.idade, clienteExistente.horaEntrada,
-                    clienteExistente.valorApagar, clienteExistente.status
+                    clienteExistente.valorApagar
             );
 
             JOptionPane.showMessageDialog(frame,

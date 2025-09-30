@@ -89,7 +89,7 @@ public class Tela_Principal implements ActionListener {
         tabela = new JTable(modeloTabela);
         modeloTabela.setColumnIdentifiers(new String[]{
                 "ID","Nome","Sexo","Idade","HoraEntrada",
-                "Calcas","Camisetas","Camisolas","Vestidos","TotItems","ValorApagar", "Status"
+                "Calcas","Camisetas","Camisolas","Vestidos","TotItems","ValorApagar"
         });
 
         tabela.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -108,7 +108,7 @@ public class Tela_Principal implements ActionListener {
         tabela.getTableHeader().setPreferredSize(new Dimension(0, 35));
 
         // Configurar renderizador para a coluna Status - CORREÇÃO: sem cast
-        tabela.getColumnModel().getColumn(11).setCellRenderer(new StatusCellRenderer());
+        tabela.getColumnModel().getColumn(10).setCellRenderer(new StatusCellRenderer());
 
         scrollPane = new JScrollPane(tabela);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -263,7 +263,6 @@ public class Tela_Principal implements ActionListener {
         columnModel.getColumn(8).setPreferredWidth(80);   // Vestidos
         columnModel.getColumn(9).setPreferredWidth(80);   // TotItems
         columnModel.getColumn(10).setPreferredWidth(100); // ValorApagar
-        columnModel.getColumn(11).setPreferredWidth(100); // Status
 
         SwingUtilities.invokeLater(() -> {
             for (int i = 0; i < tabela.getColumnCount(); i++) {
@@ -298,9 +297,7 @@ public class Tela_Principal implements ActionListener {
                     );
 
                     // Se tiver status no arquivo, usar ele
-                    if (campos.length >= 11) {
-                        c.status = campos[10];
-                    }
+
 
                     listaClientes.adicionarCliente(c);
                 }
@@ -401,7 +398,7 @@ public class Tela_Principal implements ActionListener {
                 int id = listaClientes.obterIDDoCliente(cliente);
                 relatorio.append(String.format(
                         "ID: %d | Nome: %-15s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
-                        id, cliente.nome, cliente.idade, cliente.totItems, cliente.valorApagar, cliente.status
+                        id, cliente.nome, cliente.idade, cliente.totItems, cliente.valorApagar
                 ));
                 subtotalSexo += cliente.valorApagar;
                 totalClientes++;
@@ -563,7 +560,7 @@ public class Tela_Principal implements ActionListener {
                 int id = listaClientes.obterIDDoCliente(cliente);
                 relatorio.append(String.format(
                         "ID: %d | Nome: %-15s | Sexo: %-10s | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
-                        id, cliente.nome, cliente.sexo, cliente.totItems, cliente.valorApagar, cliente.status
+                        id, cliente.nome, cliente.sexo, cliente.totItems, cliente.valorApagar
                 ));
                 subtotalIdade += cliente.valorApagar;
                 totalClientes++;
@@ -681,7 +678,7 @@ public class Tela_Principal implements ActionListener {
             int id = listaClientes.obterIDDoCliente(atual);
             relatorio.append(String.format(
                     "ID: %d | Nome: %-15s | Sexo: %-10s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
-                    id, atual.nome, atual.sexo, atual.idade, atual.totItems, atual.valorApagar, atual.status
+                    id, atual.nome, atual.sexo, atual.idade, atual.totItems, atual.valorApagar
             ));
 
             // Estatísticas
@@ -1042,7 +1039,7 @@ public class Tela_Principal implements ActionListener {
                         "📊 Status: %s",
                 id, cliente.nome, cliente.sexo, cliente.idade, cliente.horaEntrada,
                 cliente.calcas, cliente.camisetas, cliente.camisolas, cliente.vestidos,
-                cliente.totItems, cliente.valorApagar, cliente.status
+                cliente.totItems, cliente.valorApagar
         );
 
         // Destacar na tabela
@@ -1084,7 +1081,7 @@ public class Tela_Principal implements ActionListener {
             int id = listaClientes.obterIDDoCliente(cliente);
             mensagem.append(String.format(
                     "➤ ID: %d | Nome: %s | Sexo: %s | Idade: %d | Valor: %,.2f MZN | Status: %s\n",
-                    id, cliente.nome, cliente.sexo, cliente.idade, cliente.valorApagar, cliente.status
+                    id, cliente.nome, cliente.sexo, cliente.idade, cliente.valorApagar
             ));
         }
 

@@ -153,7 +153,7 @@ public class ListaClientes {
                     id++, atual.nome, atual.sexo, atual.idade,
                     atual.horaEntrada, atual.calcas, atual.camisetas,
                     atual.camisolas, atual.vestidos, atual.totItems,
-                    atual.valorApagar, atual.status
+                    atual.valorApagar
             });
             atual = atual.proximo;
         }
