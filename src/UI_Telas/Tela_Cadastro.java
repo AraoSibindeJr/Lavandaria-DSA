@@ -1,6 +1,7 @@
 package src.UI_Telas;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,24 +10,32 @@ public class Tela_Cadastro implements ActionListener {
     private JFrame frame;
     private JPanel panelCima;
     private JPanel panelBaixo;
+    private JPanel formPecas;
     private JPanel panelCentro;
+    private JPanel panelMeio;
     private JLabel titulo;
+    private JLabel tituloPecas;
     private JLabel nome;
     private JLabel sexo;
     private JLabel idade;
     private SpinnerModel esconherIdade;
-    private JLabel tipoRegistro;
     private ImageIcon iconeTela;
     private ImageIcon iconeTitulo;
     private JButton btnCancelar;
     private JButton btnConcluir;
     private JTextField txtNome;
     private JComboBox<String> escolherSexo;
-    private JComboBox<String> tipoReg;
+    private JPanel panelPecas;
+    private JComboBox<String> comboItem;
+    private JSpinner spinnerQtd;
+    private JButton btnAdicionar;
+    private JTable tabelaPecas;
+    private DefaultTableModel modeloTabela;
 
     public Tela_Cadastro() {
         instanciar();
         proTela();
+        proFormulario();
         proPanel();
         accoes();
         proCombo();
@@ -41,18 +50,26 @@ public class Tela_Cadastro implements ActionListener {
         panelCima = new JPanel();
         panelCentro = new JPanel();
         panelBaixo = new JPanel();
+        panelMeio = new JPanel(new BorderLayout());
         titulo = new JLabel();
+        formPecas = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         nome = new JLabel();
+        tituloPecas = new JLabel("Adicionar Pecas");
         sexo = new JLabel();
         idade = new JLabel();
         esconherIdade = new SpinnerNumberModel(18, 0, 120, 1);
         btnCancelar = new JButton();
         txtNome = new JTextField();
         btnConcluir = new JButton();
-        tipoRegistro = new JLabel();
-        tipoReg = new JComboBox<>();
         iconeTela = new ImageIcon("Imagens/Logo02.jpg");
         iconeTitulo = new ImageIcon("Imagens/Logo02.jpg");
+        panelPecas = new JPanel();
+        String[] itens = {"Calca", "Camiseta", "Camisola", "Vestido"};
+        comboItem = new JComboBox<>(itens);
+        spinnerQtd = new JSpinner(new SpinnerNumberModel(1, 1, 50, 1));
+        btnAdicionar = new JButton("Adicionar");
+        modeloTabela = new DefaultTableModel(new String[]{"Item", "Quantidade"}, 0);
+        tabelaPecas = new JTable(modeloTabela);
     }
 
     void proTela() {
@@ -76,16 +93,26 @@ public class Tela_Cadastro implements ActionListener {
         titulo.setForeground(Color.WHITE);
 
         nome.setText("Nome: ");
-        nome.setForeground(Color.WHITE);
+        nome.setForeground(Color.BLUE);
 
         sexo.setText("Sexo: ");
-        sexo.setForeground(Color.WHITE);
+        sexo.setForeground(Color.BLUE);
 
         idade.setText("Idade: ");
-        idade.setForeground(Color.WHITE);
+        idade.setForeground(Color.BLUE);
 
-        tipoRegistro.setText("Tipo de Registro:");
-        tipoRegistro.setForeground(Color.WHITE);
+        tituloPecas.setFont(new Font("Sans-serif", Font.BOLD, 20));
+        tituloPecas.setForeground(new Color(37, 78, 199));
+        tituloPecas.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+
+    void proFormulario() {
+        formPecas.setBackground(panelPecas.getBackground());
+        formPecas.add(new JLabel("Item:"));
+        formPecas.add(comboItem);
+        formPecas.add(new JLabel("Qtd:"));
+        formPecas.add(spinnerQtd);
+        formPecas.add(btnAdicionar);
     }
 
     void proBotoes() {
@@ -102,42 +129,44 @@ public class Tela_Cadastro implements ActionListener {
         btnConcluir.setPreferredSize(new Dimension(120, 35));
     }
 
-    void proPanel(){
+    void proPanel() {
         panelCima.setBackground(new Color(37, 78, 199));
         panelBaixo.setBackground(new Color(245, 245, 245));
-        panelCentro.setBackground(new Color(52, 119, 180, 107));
 
-        panelCima.setPreferredSize(new Dimension(400,80));
-        panelBaixo.setPreferredSize(new Dimension(400,80));
+        Color corPadrao = new Color(245, 245, 245);
+        panelCentro.setBackground(corPadrao);
+        panelPecas.setBackground(corPadrao);
 
-        panelCentro.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        panelCima.setPreferredSize(new Dimension(400, 80));
+        panelBaixo.setPreferredSize(new Dimension(400, 80));
+
+        panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panelCentro.setLayout(new GridBagLayout());
+
+        panelPecas.setLayout(new BorderLayout(10, 10));
+        panelPecas.setPreferredSize(new Dimension(400, 200));
     }
 
-    void proCombo(){
-        String[] sexoOp = {"Masculino","Feminino"};
+    void proCombo() {
+        String[] sexoOp = {"Masculino", "Feminino"};
         escolherSexo = new JComboBox<>(sexoOp);
-        escolherSexo.setPreferredSize(new Dimension(200,25));
-
-        String[] tipoR = {"Normal" , "VIP"};
-        tipoReg = new JComboBox<>(tipoR);
-        tipoReg.setPreferredSize(new Dimension(200,25));
-
-        txtNome.setPreferredSize(new Dimension(200,25));
+        escolherSexo.setPreferredSize(new Dimension(200, 25));
+        txtNome.setPreferredSize(new Dimension(200, 25));
     }
 
-    void addElementos(){
+    void addElementos() {
+        // Painéis principais
         frame.add(panelCima, BorderLayout.NORTH);
-        frame.add(panelCentro, BorderLayout.CENTER);
         frame.add(panelBaixo, BorderLayout.SOUTH);
+        frame.add(panelMeio, BorderLayout.CENTER); // Meio vai conter cadastro + peças
 
         // Topo
-        panelCima.setLayout(new FlowLayout(FlowLayout.CENTER,10,20));
+        panelCima.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 20));
         panelCima.add(titulo);
 
-        // Centro com GridBag
+        // --- Parte do cadastro ---
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
 
         gbc.gridx = 0; gbc.gridy = 0;
@@ -155,48 +184,68 @@ public class Tela_Cadastro implements ActionListener {
         gbc.gridx = 1;
         panelCentro.add(new JSpinner(esconherIdade), gbc);
 
-        gbc.gridx = 0; gbc.gridy = 3;
-        panelCentro.add(tipoRegistro, gbc);
-        gbc.gridx = 1;
-        panelCentro.add(tipoReg, gbc);
+        // --- Parte das peças ---
+        panelPecas.setLayout(new BorderLayout(10, 10));
+
+        // Título
+        JPanel panelTituloPecas = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelTituloPecas.setBackground(panelPecas.getBackground());
+        panelTituloPecas.add(tituloPecas);
+        panelPecas.add(panelTituloPecas, BorderLayout.NORTH);
+
+        // Conteúdo central (form + tabela)
+        JPanel panelConteudo = new JPanel(new BorderLayout(10, 10));
+        panelConteudo.setBackground(panelPecas.getBackground());
+        panelConteudo.add(formPecas, BorderLayout.NORTH);
+        panelConteudo.add(new JScrollPane(tabelaPecas), BorderLayout.CENTER);
+
+        panelPecas.add(panelConteudo, BorderLayout.CENTER);
+
+        // --- Unindo cadastro + peças ---
+        panelMeio.setLayout(new BorderLayout(10, 10));
+        panelMeio.add(panelCentro, BorderLayout.NORTH);
+        panelMeio.add(panelPecas, BorderLayout.CENTER);
 
         // Baixo
-        panelBaixo.setLayout(new FlowLayout(FlowLayout.CENTER,30,20));
+        panelBaixo.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
         panelBaixo.add(btnCancelar);
         panelBaixo.add(btnConcluir);
     }
 
-    void accoes(){
+    void accoes() {
         btnConcluir.addActionListener(this);
         btnCancelar.addActionListener(this);
+        btnAdicionar.addActionListener(e -> {
+            String item = comboItem.getSelectedItem().toString();
+            int qtd = (int) spinnerQtd.getValue();
+            modeloTabela.addRow(new Object[]{item, qtd});
+        });
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (txtNome.getText() != null && !txtNome.getText().isEmpty()) {
-            if (e.getSource() == btnConcluir) {
-                // Dados necessarios na tela de Recibo
-                String nome = txtNome.getText();
-                String sexo = escolherSexo.getSelectedItem().toString();
-                int idade = (int) esconherIdade.getValue();
-                String horaRegistro = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-                JOptionPane.showMessageDialog(null,
-                        "Usuario registrado com sucesso!",
-                        "Confirmacao",
-                        JOptionPane.INFORMATION_MESSAGE);
-                        //Abrir a tela de recibo
-                new Tela_Recibo(nome,sexo,idade,horaRegistro);
-                frame.dispose();
+        if(e.getSource() == btnConcluir){
+            if (txtNome.getText() == null || txtNome.getText().isEmpty()){
+                JOptionPane.showMessageDialog(null,"Por favor, insira o seu nome para continuar.","Aviso",JOptionPane.WARNING_MESSAGE);
+                return;
             }
-        } else {
-            if (e.getSource() == btnConcluir) {
+            if (modeloTabela.getRowCount()==0){
                 JOptionPane.showMessageDialog(null,
-                        "Por favor, insira o seu nome para continuar.",
+                        "O carrinho esta vazio! Por favor, adicione pecas antes de continuar.",
                         "Aviso",
                         JOptionPane.WARNING_MESSAGE);
+                return;
             }
+            String nomeCliente = txtNome.getText();
+            String sexoCliente = escolherSexo.getSelectedItem().toString();
+            int idadeCliente = (int) esconherIdade.getValue();
+            String horaRegistro = java.time.LocalDateTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+
+            new Tela_Recibo(nomeCliente, sexoCliente, idadeCliente, horaRegistro, modeloTabela);
+            frame.dispose();
         }
-        if (e.getSource() == btnCancelar){
+        if (e.getSource()==btnCancelar){
             System.exit(0);
         }
     }
