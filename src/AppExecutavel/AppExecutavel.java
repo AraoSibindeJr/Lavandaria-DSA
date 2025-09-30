@@ -1,9 +1,12 @@
 package src.AppExecutavel;
 
 import src.UI_Telas.Tela_Cadastro;
+import src.UI_Telas.Tela_Principal;
 
 public class AppExecutavel {
     public static void main(String[] args) {
-        new Tela_Cadastro();
+        Tela_Principal telaPrincipal = new Tela_Principal();
+        telaPrincipal.getFrame().setVisible(false); // inicialmente escondida
+        new Tela_Cadastro(telaPrincipal);
     }
 }

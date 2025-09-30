@@ -1,149 +1,124 @@
 package src.UI_Telas;
 
+import src.Entidades.Cliente;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
-public class Tela_Recibo implements ActionListener {
+class Tela_Recibo implements ActionListener {
     private JFrame frame;
-    private JPanel panelCima;
-    private JPanel panelBaixo;
-    private JPanel panelCentro;
-    private JButton btnContinuar;
-    private JLabel labelTitulo;
-    private ImageIcon iconeTela;
     private JTextArea areaRecibo;
-
-
-    private final int precoCalca = 150;
-    private final int precoCamiseta = 100;
-    private final int precoCamisola = 200;
-    private final int precoVestido = 150;
+    private JButton btnContinuar;
     private DefaultTableModel tabelaPecas;
+    private String nome, sexo, horaRegistro;
+    private int idade;
+    private Tela_Principal telaPrincipal;
+    private final int precoCalca=150, precoCamiseta=100, precoCamisola=200, precoVestido=150;
 
-    public Tela_Recibo(String nome, String sexo, int idade, String horaRegistro, DefaultTableModel tabelaPecas) {
+    public Tela_Recibo(String nome, String sexo, int idade, String horaRegistro,
+                       DefaultTableModel tabelaPecas, Tela_Principal telaPrincipal){
+        this.nome = nome;
+        this.sexo = sexo;
+        this.idade = idade;
+        this.horaRegistro = horaRegistro;
         this.tabelaPecas = tabelaPecas;
+        this.telaPrincipal = telaPrincipal;
 
-        instanciar();
-        proTela();
-        proPanel();
-        addElementos();
-        accao();
-        proLabel();
-        proBotao();
+        criarTela();
+        montarRecibo();
         frame.setVisible(true);
-        montarRecibo(nome, sexo, idade, horaRegistro);
     }
 
-    void instanciar() {
-        frame = new JFrame("Recibo - Lavandaria");
-        panelCima = new JPanel();
-        panelBaixo = new JPanel();
-        panelCentro = new JPanel(new BorderLayout());
+    private void criarTela(){
+        frame = new JFrame("Recibo");
+        frame.setSize(400,500);
+        frame.setLayout(new BorderLayout());
+
         areaRecibo = new JTextArea();
-        iconeTela = new ImageIcon("Imagens/Logo02.jpg");
-        btnContinuar = new JButton();
-        labelTitulo = new JLabel("Recibo do Cliente", SwingConstants.CENTER);
-    }
-
-    void proTela() {
-        frame.setSize(400, 500);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setIconImage(iconeTela.getImage());
-    }
-
-    void proLabel() {
-        labelTitulo.setFont(new Font("Sans-serif", Font.BOLD, 24));
-        labelTitulo.setForeground(Color.WHITE);
-    }
-
-    void proPanel() {
-        panelCima.setBackground(new Color(37, 78, 199));
-        panelBaixo.setBackground(new Color(37, 78, 199));
-    }
-
-    void proBotao() {
-        btnContinuar.setText("Continuar");
-        btnContinuar.setBackground(new Color(255, 255, 255));
-        btnContinuar.setForeground(Color.BLUE);
-        btnContinuar.setFocusPainted(false);
-        btnContinuar.setPreferredSize(new Dimension(120, 35));
-    }
-
-    void addElementos() {
-        frame.add(panelCima, BorderLayout.NORTH);
-        frame.add(panelCentro, BorderLayout.CENTER);
-        frame.add(panelBaixo, BorderLayout.SOUTH);
-
-        panelCima.add(labelTitulo);
-        panelBaixo.add(btnContinuar);
-
         areaRecibo.setEditable(false);
         areaRecibo.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        panelCentro.add(new JScrollPane(areaRecibo), BorderLayout.CENTER);
-    }
+        frame.add(new JScrollPane(areaRecibo), BorderLayout.CENTER);
 
-    void accao() {
+        btnContinuar = new JButton("Continuar");
+        frame.add(btnContinuar, BorderLayout.SOUTH);
         btnContinuar.addActionListener(this);
+
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    private void montarRecibo(String nome, String sexo, int idade, String horaRegistro) {
-        if (tabelaPecas.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(frame,
-                    "O carrinho está vazio! Por favor, adicione peças antes de continuar.",
-                    "Aviso",
-                    JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+    private void montarRecibo(){
+        int totalPecas=0;
+        int totalPagar=0;
 
-        int totalPecas = 0;
-        int totalPagar = 0;
         StringBuilder sb = new StringBuilder();
-
         sb.append("------ Lavandaria AroEd ------\n");
         sb.append("Nome: ").append(nome).append("\n");
         sb.append("Sexo: ").append(sexo).append("\n");
         sb.append("Idade: ").append(idade).append("\n");
-        sb.append("Data de Registro: ").append(horaRegistro).append("\n");
+        sb.append("Hora Entrada: ").append(horaRegistro).append("\n");
         sb.append("------------------------------\n");
-        sb.append("Carrinho do Cliente:\n");
+        sb.append("Carrinho:\n");
 
-        for (int i = 0; i < tabelaPecas.getRowCount(); i++) {
-            String item = tabelaPecas.getValueAt(i, 0).toString();
-            int qtd = (int) tabelaPecas.getValueAt(i, 1);
+        int calcas=0, camisetas=0, camisolas=0, vestidos=0;
 
-            int precoUnit = switch (item) {
+        for(int i=0;i<tabelaPecas.getRowCount();i++){
+            String item = tabelaPecas.getValueAt(i,0).toString();
+            int qtd = (int)tabelaPecas.getValueAt(i,1);
+            int precoUnit = switch(item){
                 case "Calca" -> precoCalca;
                 case "Camiseta" -> precoCamiseta;
                 case "Camisola" -> precoCamisola;
                 case "Vestido" -> precoVestido;
                 default -> 0;
             };
-
-            int precoItem = precoUnit * qtd;
+            int precoItem = precoUnit*qtd;
             totalPecas += qtd;
             totalPagar += precoItem;
 
             sb.append(String.format("%-10s x %2d = %3d\n", item, qtd, precoItem));
+
+            switch(item){
+                case "Calca" -> calcas += qtd;
+                case "Camiseta" -> camisetas += qtd;
+                case "Camisola" -> camisolas += qtd;
+                case "Vestido" -> vestidos += qtd;
+            }
         }
 
         sb.append("------------------------------\n");
-        sb.append("Total de pecas: ").append(totalPecas).append("\n");
+        sb.append("Total de peças: ").append(totalPecas).append("\n");
         sb.append("Total a pagar: ").append(totalPagar).append(" MZN\n");
         sb.append("------------------------------\n");
         sb.append("Obrigado pela preferencia!");
 
         areaRecibo.setText(sb.toString());
+
+        // Criar objeto Cliente
+        Cliente cliente = new Cliente(nome, sexo, idade, horaRegistro,
+                calcas, camisetas, camisolas, vestidos, totalPecas, totalPagar);
+
+        // Gravar no arquivo
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("Clientes.txt",true))){
+            writer.write(cliente.toString());
+            writer.newLine();
+        }catch(Exception e){ e.printStackTrace(); }
+
+        // Adicionar na tabela da tela principal
+        telaPrincipal.adicionarCliente(cliente);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnContinuar) {
+        if(e.getSource()==btnContinuar){
             frame.dispose();
-            System.out.println("Continuar pra tela Principal");
+            telaPrincipal.getFrame().setVisible(true);
         }
     }
 }

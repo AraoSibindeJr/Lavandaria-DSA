@@ -31,8 +31,10 @@ public class Tela_Cadastro implements ActionListener {
     private JButton btnAdicionar;
     private JTable tabelaPecas;
     private DefaultTableModel modeloTabela;
+    private Tela_Principal telaPrincipal;
 
-    public Tela_Cadastro() {
+    public Tela_Cadastro(Tela_Principal telaPrincipal) {
+        this.telaPrincipal = telaPrincipal;
         instanciar();
         proTela();
         proFormulario();
@@ -241,9 +243,9 @@ public class Tela_Cadastro implements ActionListener {
             int idadeCliente = (int) esconherIdade.getValue();
             String horaRegistro = java.time.LocalDateTime.now()
                     .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-
-            new Tela_Recibo(nomeCliente, sexoCliente, idadeCliente, horaRegistro, modeloTabela);
             frame.dispose();
+            new Tela_Recibo(nomeCliente, sexoCliente, idadeCliente, horaRegistro, modeloTabela, telaPrincipal);
+
         }
         if (e.getSource()==btnCancelar){
             System.exit(0);
