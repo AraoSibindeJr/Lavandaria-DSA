@@ -2,8 +2,10 @@ package src.UI_Telas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Tela_Recibo {
+public class Tela_Recibo implements ActionListener {
     private JFrame frame;
     private JPanel panelCima;
     private JPanel panelBaixo;
@@ -19,6 +21,7 @@ public class Tela_Recibo {
         proTela();
         proPanel();
         addElementos();
+        accao();
         proLabel();
         proBotao();
         frame.setVisible(true);
@@ -74,5 +77,17 @@ public class Tela_Recibo {
         panelCima.add(labelTitulo);
         panelBaixo.add(btnContinuar);
         panelCentro.add(new JScrollPane(areaRecibo));
+    }
+
+    void accao(){
+        btnContinuar.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == btnContinuar){
+            //Abrir tela principal do Projecto
+            System.out.println("Funciona"); //Teste da accao
+        }
     }
 }
