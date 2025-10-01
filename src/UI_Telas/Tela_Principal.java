@@ -119,31 +119,36 @@ public class Tela_Principal implements ActionListener {
         frame.setVisible(true);
     }
 
-    // CORREÇÃO: Classe interna deve ser estática ou usar referência correta
-    private class StatusCellRenderer extends DefaultTableCellRenderer {
+    private static class StatusCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+                                                       boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
+            // Resetar cores padrão
+            if (isSelected) {
+                c.setBackground(new Color(220, 240, 255));
+                c.setForeground(Color.BLACK);
+            } else {
+                c.setBackground(Color.WHITE);
+                c.setForeground(Color.BLACK);
+            }
+
+            // Aplicar cores baseadas no valor
             if (value != null) {
                 String status = value.toString();
-                if ("Pendente".equals(status)) {
-                    c.setBackground(new Color(255, 245, 157));
-                    c.setForeground(new Color(179, 98, 0));
-                } else if ("Entregue".equals(status)) {
-                    c.setBackground(new Color(200, 230, 201));
-                    c.setForeground(new Color(46, 125, 50));
+                if (status.contains("Pendente") || "Pendente".equals(status)) {
+                    c.setBackground(isSelected ? new Color(220, 240, 255) : new Color(255, 245, 157));
+                    c.setForeground(isSelected ? Color.BLACK : new Color(179, 98, 0));
+                } else if (status.contains("Entregue") || "Entregue".equals(status)) {
+                    c.setBackground(isSelected ? new Color(220, 240, 255) : new Color(200, 230, 201));
+                    c.setForeground(isSelected ? Color.BLACK : new Color(46, 125, 50));
                 }
-
-                if (isSelected) {
-                    c.setBackground(new Color(220, 240, 255));
-                    c.setForeground(Color.BLACK);
-                }
-
-                setHorizontalAlignment(SwingConstants.CENTER);
-                setFont(new Font("Sans-serif", Font.BOLD, 12));
             }
+
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setFont(new Font("Sans-serif", Font.BOLD, 12));
 
             return c;
         }
@@ -200,15 +205,16 @@ public class Tela_Principal implements ActionListener {
     }
 
     void proBotoes(){
-        JButton[] botoes = {btnClientes,  btnRelatorios};
-        for (JButton btn : botoes) {
+        // Botões do menu lateral
+        JButton[] botoesMenu = {btnClientes, btnRelatorios};
+        for (JButton btn : botoesMenu) {
             btn.setFont(new Font("Sans-serif", Font.BOLD, 16));
             btn.setBackground(new Color(52, 152, 219));
             btn.setForeground(Color.WHITE);
             btn.setFocusPainted(false);
             btn.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
             btn.setPreferredSize(new Dimension(200, 60));
-            btn.addActionListener(this);
+            btn.addActionListener(this); // GARANTIR ActionListener
 
             btn.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -220,6 +226,7 @@ public class Tela_Principal implements ActionListener {
             });
         }
 
+        // Botões de operações com clientes
         JButton[] botoesClientes = {btnAddCliente, btnBuscarCliente, btnRemoverCliente};
         for (JButton btn : botoesClientes) {
             btn.setFont(new Font("Sans-serif", Font.BOLD, 14));
@@ -240,13 +247,14 @@ public class Tela_Principal implements ActionListener {
             });
         }
 
+        // Botão Sair
         btnSair.setFont(new Font("Sans-serif", Font.BOLD, 16));
         btnSair.setBackground(new Color(215, 59, 59));
         btnSair.setForeground(Color.WHITE);
         btnSair.setFocusPainted(false);
         btnSair.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         btnSair.setPreferredSize(new Dimension(200, 60));
-        btnSair.addActionListener(this);
+        btnSair.addActionListener(e -> System.exit(0));
     }
 
     private void ajustarTabela() {
@@ -289,21 +297,28 @@ public class Tela_Principal implements ActionListener {
             while((line = br.readLine()) != null){
                 String[] campos = line.split(";");
                 if(campos.length >= 10){
+
                     Cliente c = new Cliente(
-                            campos[0], campos[1], Integer.parseInt(campos[2]),
-                            campos[3], Integer.parseInt(campos[4]), Integer.parseInt(campos[5]),
-                            Integer.parseInt(campos[6]), Integer.parseInt(campos[7]),
-                            Integer.parseInt(campos[8]), Double.parseDouble(campos[9])
+                            campos[0], // nome
+                            campos[1], // sexo
+                            Integer.parseInt(campos[2]), // idade
+                            campos[3], // horaEntrada
+                            Integer.parseInt(campos[4]), // calcas
+                            Integer.parseInt(campos[5]), // camisetas
+                            Integer.parseInt(campos[6]), // camisolas
+                            Integer.parseInt(campos[7]), // vestidos
+                            Integer.parseInt(campos[8]), // totItems
+                            Double.parseDouble(campos[9]) // valorApagar
                     );
-
-                    // Se tiver status no arquivo, usar ele
-
 
                     listaClientes.adicionarCliente(c);
                 }
             }
         } catch(Exception e){
             e.printStackTrace();
+            JOptionPane.showMessageDialog(frame,
+                    "Erro ao carregar clientes: " + e.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
         }
         atualizarTabela();
     }
@@ -354,9 +369,11 @@ public class Tela_Principal implements ActionListener {
             case 3: // Relatório Completo
                 gerarRelatorioCompleto();
                 break;
-            // case 4: Cancelar - não faz nada
+            // case 5: Cancelar - não faz nada
         }
     }
+
+
 
     private void gerarRelatorioPorSexo() {
         if (listaClientes.totalClientes() == 0) {
@@ -397,7 +414,7 @@ public class Tela_Principal implements ActionListener {
             for (Cliente cliente : clientes) {
                 int id = listaClientes.obterIDDoCliente(cliente);
                 relatorio.append(String.format(
-                        "ID: %d | Nome: %-15s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
+                        "ID: %d | Nome: %-15s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN \n",
                         id, cliente.nome, cliente.idade, cliente.totItems, cliente.valorApagar
                 ));
                 subtotalSexo += cliente.valorApagar;
@@ -559,7 +576,7 @@ public class Tela_Principal implements ActionListener {
             for (Cliente cliente : clientes) {
                 int id = listaClientes.obterIDDoCliente(cliente);
                 relatorio.append(String.format(
-                        "ID: %d | Nome: %-15s | Sexo: %-10s | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
+                        "ID: %d | Nome: %-15s | Sexo: %-10s | Itens: %2d | Valor: %,.2f MZN \n",
                         id, cliente.nome, cliente.sexo, cliente.totItems, cliente.valorApagar
                 ));
                 subtotalIdade += cliente.valorApagar;
@@ -677,7 +694,7 @@ public class Tela_Principal implements ActionListener {
         while (atual != null) {
             int id = listaClientes.obterIDDoCliente(atual);
             relatorio.append(String.format(
-                    "ID: %d | Nome: %-15s | Sexo: %-10s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN | Status: %s\n",
+                    "ID: %d | Nome: %-15s | Sexo: %-10s | Idade: %2d | Itens: %2d | Valor: %,.2f MZN\n",
                     id, atual.nome, atual.sexo, atual.idade, atual.totItems, atual.valorApagar
             ));
 
@@ -1023,23 +1040,31 @@ public class Tela_Principal implements ActionListener {
         String mensagem = String.format(
                 "✅ CLIENTE ENCONTRADO\n\n" +
                         "📋 Informações do Cliente:\n" +
-                        "➤ ID: %d\n" +
-                        "➤ Nome: %s\n" +
-                        "➤ Sexo: %s\n" +
-                        "➤ Idade: %d anos\n" +
-                        "➤ Hora de Entrada: %s\n\n" +
+                        "➤ ID: %d\n" +  // %d para o ID (número)
+                        "➤ Nome: %s\n" + // %s para nome (String)
+                        "➤ Sexo: %s\n" + // %s para sexo (String)
+                        "➤ Idade: %d anos\n" + // %d para idade (número)
+                        "➤ Hora de Entrada: %s\n\n" + // %s para hora (String)
                         "👕 Itens para Lavar:\n" +
-                        "➤ Calças: %d\n" +
-                        "➤ Camisetas: %d\n" +
-                        "➤ Camisolas: %d\n" +
-                        "➤ Vestidos: %d\n\n" +
+                        "➤ Calças: %d\n" + // %d para calcas (número)
+                        "➤ Camisetas: %d\n" + // %d para camisetas (número)
+                        "➤ Camisolas: %d\n" + // %d para camisolas (número)
+                        "➤ Vestidos: %d\n\n" + // %d para vestidos (número)
                         "💰 Total:\n" +
-                        "➤ Total de Itens: %d\n" +
-                        "➤ Valor a Pagar: %,.2f MZN\n\n" +
-                        "📊 Status: %s",
-                id, cliente.nome, cliente.sexo, cliente.idade, cliente.horaEntrada,
-                cliente.calcas, cliente.camisetas, cliente.camisolas, cliente.vestidos,
-                cliente.totItems, cliente.valorApagar
+                        "➤ Total de Itens: %d\n" + // %d para totItems (número)
+                        "➤ Valor a Pagar: %,.2f MZN\n\n", // %,.2f para valor (double)
+                // Removido o "📊 Status: %s" que estava causando problemas
+                id,
+                cliente.nome,
+                cliente.sexo,
+                cliente.idade,
+                cliente.horaEntrada,
+                cliente.calcas,
+                cliente.camisetas,
+                cliente.camisolas,
+                cliente.vestidos,
+                cliente.totItems,
+                cliente.valorApagar
         );
 
         // Destacar na tabela
@@ -1080,7 +1105,7 @@ public class Tela_Principal implements ActionListener {
         for (Cliente cliente : clientes) {
             int id = listaClientes.obterIDDoCliente(cliente);
             mensagem.append(String.format(
-                    "➤ ID: %d | Nome: %s | Sexo: %s | Idade: %d | Valor: %,.2f MZN | Status: %s\n",
+                    "➤ ID: %d | Nome: %s | Sexo: %s | Idade: %d | Valor: %,.2f MZN\n", // Removido | Status: %s
                     id, cliente.nome, cliente.sexo, cliente.idade, cliente.valorApagar
             ));
         }

@@ -94,7 +94,7 @@ public class ListaClientes {
     public Cliente buscarClientePorNome(String nome) {
         Cliente atual = inicio;
         while (atual != null) {
-            if (atual.nome.equalsIgnoreCase(nome)) {
+            if (atual.nome.equalsIgnoreCase(nome.trim())) {
                 return atual;
             }
             atual = atual.proximo;

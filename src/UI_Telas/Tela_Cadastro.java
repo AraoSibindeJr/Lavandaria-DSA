@@ -227,7 +227,7 @@ public class Tela_Cadastro implements ActionListener {
         });
     }
 
-    // NOVO MÉTODO: Verificar se nome já existe
+
     private boolean nomeJaExiste(String nome) {
         // Buscar na lista de clientes da tela principal
         ListaClientes listaClientes = telaPrincipal.getListaClientes();
@@ -262,7 +262,6 @@ public class Tela_Cadastro implements ActionListener {
                             "➤ Idade: %d anos\n" +
                             "➤ Hora de Entrada: %s\n\n" +
                             "💰 Valor a Pagar: %,.2f MZN\n" +
-                            "📊 Status: %s\n\n" +
                             "❌ Não é permitido cadastrar clientes com o mesmo nome.",
                     nome, id, clienteExistente.nome, clienteExistente.sexo,
                     clienteExistente.idade, clienteExistente.horaEntrada,
